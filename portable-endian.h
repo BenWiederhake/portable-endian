@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -84,8 +84,16 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_be16toh(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_htole16; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (((uint16_t)u.as_chars[0]) << 8)
-            | (((uint16_t)u.as_chars[1]) << 0);
+    /* No matter *what* is being shifted, it is first promoted to int.
+     * http://stackoverflow.com/a/11203159/3070326
+     * This means that (((uint16_t)u.as_chars[0]) << 8) might be of type int,
+     * so the overall value might be of type int, which might be longer than
+     * uint16_t, resulting in loss of precision.
+     * This is visible with "clang -Weverything". */
+    return (uint16_t)(
+              (((uint16_t)u.as_chars[0]) << 8)
+            | (((uint16_t)u.as_chars[1]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htobe16(uint16_t v) {
     /* Note that htons and ntohs are the same because, mathematically speaking,
@@ -94,22 +102,24 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htobe16(uint16_t v) {
      * 32- and 64-bit values anyway. */
     union portable_endian_u16_union u;
     (void)pe_be16toh; /* Avoid "unused function" warnings */
-    u.as_chars[0] = v >> 8;
-    u.as_chars[1] = v >> 0;
+    u.as_chars[0] = (unsigned char)(v >> 8);
+    u.as_chars[1] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_le16toh(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_htobe16; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (u.as_chars[1] << 8)
-            | (((uint16_t)u.as_chars[0]) << 0);
+    return (uint16_t)(
+              (((uint16_t)u.as_chars[1]) << 8)
+            | (((uint16_t)u.as_chars[0]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htole16(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_le16toh; /* Avoid "unused function" warnings */
-    u.as_chars[1] = v >> 8;
-    u.as_chars[0] = v >> 0;
+    u.as_chars[1] = (unsigned char)(v >> 8);
+    u.as_chars[0] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 #endif /* PORTABLE_ENDIAN_DECLS_ONLY */
@@ -131,36 +141,40 @@ PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_be32toh(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_htole32; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (((uint32_t)u.as_chars[0]) << 24)
+    return (uint32_t)(
+              (((uint32_t)u.as_chars[0]) << 24)
             | (((uint32_t)u.as_chars[1]) << 16)
             | (((uint32_t)u.as_chars[2]) << 8)
-            | (((uint32_t)u.as_chars[3]) << 0);
+            | (((uint32_t)u.as_chars[3]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htobe32(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_be32toh; /* Avoid "unused function" warnings */
-    u.as_chars[0] = v >> 24;
-    u.as_chars[1] = v >> 16;
-    u.as_chars[2] = v >> 8;
-    u.as_chars[3] = v >> 0;
+    u.as_chars[0] = (unsigned char)(v >> 24);
+    u.as_chars[1] = (unsigned char)(v >> 16);
+    u.as_chars[2] = (unsigned char)(v >> 8);
+    u.as_chars[3] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_le32toh(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_htobe32; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (((uint32_t)u.as_chars[3]) << 24)
+    return (uint32_t)(
+              (((uint32_t)u.as_chars[3]) << 24)
             | (((uint32_t)u.as_chars[2]) << 16)
             | (((uint32_t)u.as_chars[1]) << 8)
-            | (((uint32_t)u.as_chars[0]) << 0);
+            | (((uint32_t)u.as_chars[0]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htole32(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_le32toh; /* Avoid "unused function" warnings */
-    u.as_chars[3] = v >> 24;
-    u.as_chars[2] = v >> 16;
-    u.as_chars[1] = v >> 8;
-    u.as_chars[0] = v >> 0;
+    u.as_chars[3] = (unsigned char)(v >> 24);
+    u.as_chars[2] = (unsigned char)(v >> 16);
+    u.as_chars[1] = (unsigned char)(v >> 8);
+    u.as_chars[0] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 #endif /* PORTABLE_ENDIAN_DECLS_ONLY */
@@ -182,14 +196,16 @@ PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_be64toh(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_htole64; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (((uint64_t)u.as_chars[0]) << 56)
+    return (uint64_t)(
+              (((uint64_t)u.as_chars[0]) << 56)
             | (((uint64_t)u.as_chars[1]) << 48)
             | (((uint64_t)u.as_chars[2]) << 40)
             | (((uint64_t)u.as_chars[3]) << 32)
             | (((uint64_t)u.as_chars[4]) << 24)
             | (((uint64_t)u.as_chars[5]) << 16)
             | (((uint64_t)u.as_chars[6]) << 8)
-            | (((uint64_t)u.as_chars[7]) << 0);
+            | (((uint64_t)u.as_chars[7]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htobe64(uint64_t v) {
     /* Note that htons and ntohs are the same because, mathematically speaking,
@@ -199,40 +215,42 @@ PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htobe64(uint64_t v) {
      * 64-bit values anyway. */
     union portable_endian_u64_union u;
     (void)pe_be64toh; /* Avoid "unused function" warnings */
-    u.as_chars[0] = v >> 56;
-    u.as_chars[1] = v >> 48;
-    u.as_chars[2] = v >> 40;
-    u.as_chars[3] = v >> 32;
-    u.as_chars[4] = v >> 24;
-    u.as_chars[5] = v >> 16;
-    u.as_chars[6] = v >> 8;
-    u.as_chars[7] = v >> 0;
+    u.as_chars[0] = (unsigned char)(v >> 56);
+    u.as_chars[1] = (unsigned char)(v >> 48);
+    u.as_chars[2] = (unsigned char)(v >> 40);
+    u.as_chars[3] = (unsigned char)(v >> 32);
+    u.as_chars[4] = (unsigned char)(v >> 24);
+    u.as_chars[5] = (unsigned char)(v >> 16);
+    u.as_chars[6] = (unsigned char)(v >> 8);
+    u.as_chars[7] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_le64toh(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_htobe64; /* Avoid "unused function" warnings */
     u.as_uint = v;
-    return (((uint64_t)u.as_chars[7]) << 56)
+    return (uint64_t)(
+              (((uint64_t)u.as_chars[7]) << 56)
             | (((uint64_t)u.as_chars[6]) << 48)
             | (((uint64_t)u.as_chars[5]) << 40)
             | (((uint64_t)u.as_chars[4]) << 32)
             | (((uint64_t)u.as_chars[3]) << 24)
             | (((uint64_t)u.as_chars[2]) << 16)
             | (((uint64_t)u.as_chars[1]) << 8)
-            | (((uint64_t)u.as_chars[0]) << 0);
+            | (((uint64_t)u.as_chars[0]) << 0)
+            );
 }
 PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htole64(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_le64toh; /* Avoid "unused function" warnings */
-    u.as_chars[7] = v >> 56;
-    u.as_chars[6] = v >> 48;
-    u.as_chars[5] = v >> 40;
-    u.as_chars[4] = v >> 32;
-    u.as_chars[3] = v >> 24;
-    u.as_chars[2] = v >> 16;
-    u.as_chars[1] = v >> 8;
-    u.as_chars[0] = v >> 0;
+    u.as_chars[7] = (unsigned char)(v >> 56);
+    u.as_chars[6] = (unsigned char)(v >> 48);
+    u.as_chars[5] = (unsigned char)(v >> 40);
+    u.as_chars[4] = (unsigned char)(v >> 32);
+    u.as_chars[3] = (unsigned char)(v >> 24);
+    u.as_chars[2] = (unsigned char)(v >> 16);
+    u.as_chars[1] = (unsigned char)(v >> 8);
+    u.as_chars[0] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
 #endif /* PORTABLE_ENDIAN_DECLS_ONLY */
