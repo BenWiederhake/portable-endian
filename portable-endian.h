@@ -34,10 +34,11 @@
  * for example if there's no uint64_t:
  *   #define PORTABLE_ENDIAN_NO_UINT_64_T
  *
- * In case you have a *really* weird system where it's not possible to put
- * "static inline" in front of a function, just define
- * PORTABLE_ENDIAN_FORCE_INLINE to replace that part, e.g. with C89:
- *   #define PORTABLE_ENDIAN_FORCE_INLINE static
+ * In case you have a *really* weird system where the compiler doesn't know how
+ * to inline a function that's nothing but a bitshifts and ORs (no branches!),
+ * try putting "static inline" in front of a function with the macro
+ * PORTABLE_ENDIAN_FORCE_INLINE (except on C89):
+ *   #define PORTABLE_ENDIAN_FORCE_INLINE static inline
  *
  * In case you have a *really* weird system where the above trick doesn't quite
  * work or doesn't get properly inlined, do the following in exactly one
@@ -60,12 +61,9 @@
 /* To differentiate this from different forks, this is the specific flavor of
  * the project. Please *do* change this string when forking. */
 #define PORTABLE_ENDIAN_FLAVOR "VIPERS_BEGAN_HOBBLE"
-/* The specific value "VIPERS_BEGAN_HOBBLE" contains an easter egg.
- * It's impossible to find out why or what, though, so I mention it here
- * explicitly: yeah. Easter egg. Funny coincidence, it's easter. */
 
 #ifndef PORTABLE_ENDIAN_FORCE_INLINE
-#define PORTABLE_ENDIAN_FORCE_INLINE static inline
+#define PORTABLE_ENDIAN_FORCE_INLINE static
 #endif /* PORTABLE_ENDIAN_FORCE_INLINE */
 
 
