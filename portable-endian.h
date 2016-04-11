@@ -37,15 +37,15 @@
  * In case you have a *really* weird system where the compiler doesn't know how
  * to inline a function that's nothing but a bitshifts and ORs (no branches!),
  * try putting "static inline" in front of a function with the macro
- * PORTABLE_ENDIAN_FORCE_INLINE (except on C89):
- *   #define PORTABLE_ENDIAN_FORCE_INLINE static inline
+ * PORTABLE_ENDIAN_MODIFIERS (except on C89):
+ *   #define PORTABLE_ENDIAN_MODIFIERS static inline
  *
  * In case you have a *really* weird system where the above trick doesn't quite
  * work or doesn't get properly inlined, do the following in exactly one
  * compilation unit:
- *   #define PORTABLE_ENDIAN_FORCE_INLINE / * nothing * /
+ *   #define PORTABLE_ENDIAN_MODIFIERS / * nothing * /
  * and in all other compilation units:
- *   #define PORTABLE_ENDIAN_FORCE_INLINE extern
+ *   #define PORTABLE_ENDIAN_MODIFIERS extern
  *   #define PORTABLE_ENDIAN_DECLS_ONLY
  * This way, portable-endian behaves mostly as if it's a library against which
  * you statically link, without the hassle of having to deal with any
@@ -62,23 +62,23 @@
  * the project. Please *do* change this string when forking. */
 #define PORTABLE_ENDIAN_FLAVOR "VIPERS_BEGAN_HOBBLE"
 
-#ifndef PORTABLE_ENDIAN_FORCE_INLINE
-#define PORTABLE_ENDIAN_FORCE_INLINE static
-#endif /* PORTABLE_ENDIAN_FORCE_INLINE */
+#ifndef PORTABLE_ENDIAN_MODIFIERS
+#define PORTABLE_ENDIAN_MODIFIERS static
+#endif /* PORTABLE_ENDIAN_MODIFIERS */
 
 
 #ifndef PORTABLE_ENDIAN_NO_UINT_16_T
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_be16toh(uint16_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htobe16(uint16_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_le16toh(uint16_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htole16(uint16_t v);
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_be16toh(uint16_t v);
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_htobe16(uint16_t v);
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_le16toh(uint16_t v);
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_htole16(uint16_t v);
 typedef char portable_endian_u16_check[sizeof(uint16_t) == (16/8) ? 1 : -1];
 #ifndef PORTABLE_ENDIAN_DECLS_ONLY
 union portable_endian_u16_union {
     uint16_t as_uint;
     unsigned char as_chars[sizeof(uint16_t)];
 };
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_be16toh(uint16_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_be16toh(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_htole16; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -93,7 +93,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_be16toh(uint16_t v) {
             | (((uint16_t)u.as_chars[1]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htobe16(uint16_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_htobe16(uint16_t v) {
     /* Note that htons and ntohs are the same because, mathematically speaking,
      * it holds for every permutation p of two elements that (p \concat p) = id.
      * For readability we do not exploit this here, since it doesn't hold for
@@ -104,7 +104,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htobe16(uint16_t v) {
     u.as_chars[1] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_le16toh(uint16_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_le16toh(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_htobe16; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -113,7 +113,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_le16toh(uint16_t v) {
             | (((uint16_t)u.as_chars[0]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htole16(uint16_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint16_t pe_htole16(uint16_t v) {
     union portable_endian_u16_union u;
     (void)pe_le16toh; /* Avoid "unused function" warnings */
     u.as_chars[1] = (unsigned char)(v >> 8);
@@ -125,17 +125,17 @@ PORTABLE_ENDIAN_FORCE_INLINE uint16_t pe_htole16(uint16_t v) {
 
 
 #ifndef PORTABLE_ENDIAN_NO_UINT_32_T
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_be32toh(uint32_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htobe32(uint32_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_le32toh(uint32_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htole32(uint32_t v);
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_be32toh(uint32_t v);
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htobe32(uint32_t v);
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_le32toh(uint32_t v);
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htole32(uint32_t v);
 typedef char portable_endian_u32_check[sizeof(uint32_t) == (32/8) ? 1 : -1];
 #ifndef PORTABLE_ENDIAN_DECLS_ONLY
 union portable_endian_u32_union {
     uint32_t as_uint;
     unsigned char as_chars[sizeof(uint32_t)];
 };
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_be32toh(uint32_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_be32toh(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_htole32; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -146,7 +146,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_be32toh(uint32_t v) {
             | (((uint32_t)u.as_chars[3]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htobe32(uint32_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htobe32(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_be32toh; /* Avoid "unused function" warnings */
     u.as_chars[0] = (unsigned char)(v >> 24);
@@ -155,7 +155,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htobe32(uint32_t v) {
     u.as_chars[3] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_le32toh(uint32_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_le32toh(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_htobe32; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -166,7 +166,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_le32toh(uint32_t v) {
             | (((uint32_t)u.as_chars[0]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htole32(uint32_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htole32(uint32_t v) {
     union portable_endian_u32_union u;
     (void)pe_le32toh; /* Avoid "unused function" warnings */
     u.as_chars[3] = (unsigned char)(v >> 24);
@@ -180,17 +180,17 @@ PORTABLE_ENDIAN_FORCE_INLINE uint32_t pe_htole32(uint32_t v) {
 
 
 #ifndef PORTABLE_ENDIAN_NO_UINT_64_T
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_be64toh(uint64_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htobe64(uint64_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_le64toh(uint64_t v);
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htole64(uint64_t v);
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_be64toh(uint64_t v);
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_htobe64(uint64_t v);
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_le64toh(uint64_t v);
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_htole64(uint64_t v);
 typedef char portable_endian_u64_check[sizeof(uint64_t) == (64/8) ? 1 : -1];
 #ifndef PORTABLE_ENDIAN_DECLS_ONLY
 union portable_endian_u64_union {
     uint64_t as_uint;
     unsigned char as_chars[sizeof(uint64_t)];
 };
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_be64toh(uint64_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_be64toh(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_htole64; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -205,7 +205,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_be64toh(uint64_t v) {
             | (((uint64_t)u.as_chars[7]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htobe64(uint64_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_htobe64(uint64_t v) {
     /* Note that htons and ntohs are the same because, mathematically speaking,
      * it holds for every permutation p of two elements that p \concat p is the
      * identity.
@@ -223,7 +223,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htobe64(uint64_t v) {
     u.as_chars[7] = (unsigned char)(v >> 0);
     return u.as_uint;
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_le64toh(uint64_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_le64toh(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_htobe64; /* Avoid "unused function" warnings */
     u.as_uint = v;
@@ -238,7 +238,7 @@ PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_le64toh(uint64_t v) {
             | (((uint64_t)u.as_chars[0]) << 0)
             );
 }
-PORTABLE_ENDIAN_FORCE_INLINE uint64_t pe_htole64(uint64_t v) {
+PORTABLE_ENDIAN_MODIFIERS uint64_t pe_htole64(uint64_t v) {
     union portable_endian_u64_union u;
     (void)pe_le64toh; /* Avoid "unused function" warnings */
     u.as_chars[7] = (unsigned char)(v >> 56);
