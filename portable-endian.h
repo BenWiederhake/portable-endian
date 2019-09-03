@@ -75,13 +75,19 @@
 #include <stdint.h>
 
 
+
 /* To differentiate this from different forks, this is the specific flavor of
- * the project. Please *do* change this string when forking. */
+ * the project. Please *do* change this string when forking.
+ * The original flavor "VIPERS_BEGAN_HOBBLE" is hosted here:
+ * https://github.com/BenWiederhake/portable-endian/
+ * The words were chosen by randomly picking from the dictionary.
+ * I never actually observed that vipers began to hobble. */
 #define PORTABLE_ENDIAN_FLAVOR "VIPERS_BEGAN_HOBBLE"
 
 #ifndef PORTABLE_ENDIAN_MODIFIERS
 #define PORTABLE_ENDIAN_MODIFIERS static
 #endif /* PORTABLE_ENDIAN_MODIFIERS */
+
 
 
 #ifndef PORTABLE_ENDIAN_NO_UINT_16_T
@@ -141,6 +147,7 @@ PORTABLE_ENDIAN_MODIFIERS uint16_t pe_htole16(uint16_t v) {
 #endif /* PORTABLE_ENDIAN_NO_UINT_16_T */
 
 
+
 #ifndef PORTABLE_ENDIAN_NO_UINT_32_T
 PORTABLE_ENDIAN_MODIFIERS uint32_t pe_be32toh(uint32_t v);
 PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htobe32(uint32_t v);
@@ -194,6 +201,7 @@ PORTABLE_ENDIAN_MODIFIERS uint32_t pe_htole32(uint32_t v) {
 }
 #endif /* PORTABLE_ENDIAN_DECLS_ONLY */
 #endif /* PORTABLE_ENDIAN_NO_UINT_32_T */
+
 
 
 #ifndef PORTABLE_ENDIAN_NO_UINT_64_T
@@ -270,6 +278,7 @@ PORTABLE_ENDIAN_MODIFIERS uint64_t pe_htole64(uint64_t v) {
 }
 #endif /* PORTABLE_ENDIAN_DECLS_ONLY */
 #endif /* PORTABLE_ENDIAN_NO_UINT_64_T */
+
 
 
 #endif /* PORTABLE_ENDIAN_PORTABLE_ENDIAN_H_ */
